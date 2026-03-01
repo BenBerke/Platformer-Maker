@@ -3,8 +3,16 @@
 
 #include "../Headers/Player.h"
 #include "../Headers/Renderer.h"
+#include "../Headers/InputManager.h"
 
 extern "C" SDL_Texture* create_texture(const std::string& fileName, SDL_Renderer* renderer);
+
+enum CurrentState {
+    DRAWING,
+    VIEWING,
+};
+
+CurrentState currentState = VIEWING;
 
 int main () {
     if (!SDL_Init(SDL_INIT_VIDEO)) { SDL_Log("Error on init application: %s", SDL_GetError()); return -1; }
@@ -20,33 +28,20 @@ int main () {
 
     SDL_Texture* texture = create_texture("src/textFile.txt", render.renderer);
 
-    bool isPlaying = true;
-    SDL_Event event;
-    while (isPlaying) {
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_EVENT_QUIT) {
-                isPlaying = false;
-            }
-            else if (event.type == SDL_EVENT_KEY_DOWN) {
-                if (event.key.key == SDLK_SPACE) {
-                }
-            }
-        }
+    bool running = true;
+    while (running) {
+        uint64_t start = SDL_GetPerformanceCounter();
+        InputManager::BeginFrame();
 
+        if (InputManager::GetKeyDown(SDL_SCANCODE_ESCAPE)) running = false;
+        
         render.BeginFrame();
-        // for (int i = 0; i < WORLD_HEIGHT; i++) {
-        //     for (int j = 0; j < WORLD_WIDTH; j++) {
-        //         switch (tiles[i][j]) {
-        //             case 0: render.DrawSquare(j * SQUARE_SIZE, i * SQUARE_SIZE, 255, 255, 255); break;
-        //             case 1: render.DrawSquare(j * SQUARE_SIZE, i * SQUARE_SIZE, 0, 255, 255); break;
-        //             case 2: render.DrawSquare(j * SQUARE_SIZE, i * SQUARE_SIZE, 255, 0, 255); break;
-        //             case 3: render.DrawSquare(j * SQUARE_SIZE, i * SQUARE_SIZE, 255, 255, 0); break;
-        //             default: break;
-        //         }
-        //     }
-        // }
         render.DrawTexture(texture, 50, 50);
+
         render.EndFrame();
+        const uint64_t end = SDL_GetPerformanceCounter();
+        const double elapsedSeconds = static_cast<double>(end - start) * 1000.0f / static_cast<double>(SDL_GetPerformanceFrequency());
+        if (const double delay =TARGET_FRAME_MS - elapsedSeconds; delay > 0) SDL_Delay(static_cast<uint32_t>(delay));
     }
 
     return 0;

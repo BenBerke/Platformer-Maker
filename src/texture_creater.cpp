@@ -16,10 +16,10 @@ extern "C" SDL_Texture* create_texture(const string &fileName, SDL_Renderer *ren
     while (getline(f, s)) {
         auto p = static_cast<uint32_t>(std::stoul(s, nullptr, 0));
         const SDL_PixelFormatDetails *fmt = SDL_GetPixelFormatDetails(SDL_PIXELFORMAT_RGBA8888);
-        uint8_t r = (p  >> 16) & 0xff;
-        uint8_t g = (p >> 8) & 0xff;
-        uint8_t b = (p >> 0) & 0xff;
-        uint8_t a = 0xff;
+        uint8_t r = p  >> 24 & 0xff;
+        uint8_t g = p >> 16 & 0xff;
+        uint8_t b = p >> 8 & 0xff;
+        uint8_t a = p & 0xff;
 
         uint32_t t = SDL_MapRGBA(fmt, nullptr, r, g, b, a);
         if (idx < 16 * 16) pixels[idx++] = t;

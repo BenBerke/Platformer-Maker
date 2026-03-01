@@ -5,14 +5,18 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(Voxel src/main.cpp
-        src/Player.cpp
-        Headers/Player.h
-        src/Renderer.cpp
         Headers/Renderer.h
-        Headers/config.h
-        src/Tile.cpp
+        Headers/InputManager.h
         Headers/Tile.h
+        Headers/Player.h
+        Headers/config.h
+        Headers/Vector.h
+
+        src/Renderer.cpp
+        src/Tile.cpp
+        src/Player.cpp
         src/texture_creater.cpp
+        src/InputManager.cpp
 )
 
 find_package(SDL3 CONFIG REQUIRED)
